@@ -43,10 +43,11 @@ namespace VacationRental.Api.Controllers
         [HttpPost]
         [Route("api/v1/rentals")]
         [Route("~/api/v1/vacationrental/rentals")]
-        public ResourceIdViewModel Post(RentalBindingModel model)
+        public IActionResult Post(RentalBindingModel model)
         {
             var rentalId = RentalService.Create(Mapper.Map<Rental>(model));
-            return new ResourceIdViewModel(rentalId);
+            Response.StatusCode = 200;
+            return Ok(new ResourceIdViewModel(rentalId));
         }
 
         [HttpPut]
@@ -55,6 +56,7 @@ namespace VacationRental.Api.Controllers
         {
             RentalService.Update(rentalId, Mapper.Map<Rental>(model));
 
+            //TO-DO:
             //If the length of preparation time is changed then it should be updated for all existing bookings. 
             //The request should fail if decreasing the number of units or increasing the length of preparation time will produce overlapping between 
             //existing bookings and/or their preparation times.

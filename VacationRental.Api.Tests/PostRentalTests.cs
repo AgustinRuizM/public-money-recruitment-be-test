@@ -1,9 +1,11 @@
-﻿using System;
+﻿using FluentAssertions;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using VacationRental.Api.ViewModels;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace VacationRental.Api.Tests
 {
@@ -11,10 +13,12 @@ namespace VacationRental.Api.Tests
     public class PostRentalTests
     {
         private readonly HttpClient _client;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public PostRentalTests(IntegrationFixture fixture)
+        public PostRentalTests(IntegrationFixture fixture, ITestOutputHelper testOutputHelper)
         {
             _client = fixture.Client;
+            this._testOutputHelper = testOutputHelper;
         }
 
         [Fact]
@@ -22,22 +26,25 @@ namespace VacationRental.Api.Tests
         {
             var request = new RentalBindingModel
             {
-                Units = 25
+                Units = 5,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postResult;
             using (var postResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", request))
             {
-                Assert.True(postResponse.IsSuccessStatusCode);
+                postResponse.EnsureSuccessStatusCode();
+                _testOutputHelper.WriteLine(postResponse.StatusCode.ToString());
                 postResult = await postResponse.Content.ReadAsAsync<ResourceIdViewModel>();
             }
 
             using (var getResponse = await _client.GetAsync($"/api/v1/rentals/{postResult.Id}"))
             {
-                Assert.True(getResponse.IsSuccessStatusCode);
+                getResponse.EnsureSuccessStatusCode();
 
                 var getResult = await getResponse.Content.ReadAsAsync<RentalViewModel>();
-                Assert.Equal(request.Units, getResult.Units);
+                request.Units.Should().Be(getResult.Units);
+                request.PreparationTimeInDays.Should().Be(getResult.PreparationTimeInDays);
             }
         }
     }
