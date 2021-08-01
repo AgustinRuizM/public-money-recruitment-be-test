@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
@@ -54,7 +55,12 @@ namespace VacationRental.Api.Controllers
         [Route("~/api/v1/vacationrental/rentals/{rentalId:int}")]
         public void Put(int rentalId, RentalBindingModel model)
         {
+            var originalRental = RentalService.Get(rentalId);
+            if (originalRental.PreparationTimeInDays != model.PreparationTimeInDays)
+
+            
             RentalService.Update(rentalId, Mapper.Map<Rental>(model));
+
 
             //TO-DO:
             //If the length of preparation time is changed then it should be updated for all existing bookings. 

@@ -10,5 +10,6 @@ namespace VacationRental.Api.Model
         public int RentalId { get; set; }
         public DateTime Start { get; set; }
         public int Nights { get; set; }
+        public int Unit { get; set; }
     }
 }

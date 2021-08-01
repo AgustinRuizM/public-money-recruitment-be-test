@@ -21,15 +21,29 @@ namespace VacationRental.Api.Core.Services.Implementations
         public bool IsFree(int rentalId, DateTime start, DateTime end)
         {
             var rental = RentalService.Get(rentalId);
-            var bookings = GetAll().Where(x =>  x.RentalId == rentalId && 
-                                                x.Start <= end && 
-                                                start <= x.Start.AddDays(x.Nights + rental.PreparationTimeInDays));
+            var bookings = GetByRentalAndDate(rentalId, start, end);
             return rental.Units > bookings.Count();
         }
 
         public IEnumerable<Booking> GetByRental(int rentalId)
         {
             return GetAll().Where(x => x.RentalId == rentalId);
+        }
+
+        public IEnumerable<Booking> GetByRentalAndDate(int rentalId, DateTime start, DateTime end)
+        {
+            var rental = RentalService.Get(rentalId);
+            return GetAll().Where(x => x.RentalId == rentalId &&
+                                        x.Start <= end &&
+                                        start <= x.Start.AddDays(x.Nights + rental.PreparationTimeInDays));
+        }
+
+        public int GetFreeUnit(int rentalId, DateTime start, DateTime end)
+        {
+            var bookings = GetByRentalAndDate(rentalId, start, end);
+            if (bookings.Any())
+                return bookings.Max(x => x.Unit) + 1;
+            else return 1;
         }
     }
 }

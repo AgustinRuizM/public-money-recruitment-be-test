@@ -59,7 +59,9 @@ namespace VacationRental.Api.Controllers
                 
             if (BookingService.IsFree(model.RentalId, model.Start, model.Start.AddDays(model.Nights)))
             {
-                bookingId = BookingService.Create(Mapper.Map<Booking>(model));
+                var booking = Mapper.Map<Booking>(model);
+                booking.Unit = BookingService.GetFreeUnit(model.RentalId, model.Start, model.Start.AddDays(model.Nights));
+                bookingId = BookingService.Create(booking);
             }
             else
             {

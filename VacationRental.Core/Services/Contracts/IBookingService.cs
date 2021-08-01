@@ -10,5 +10,7 @@ namespace VacationRental.Api.Core.Services.Contracts
     {
         bool IsFree(int rentalId, DateTime start, DateTime end);
         IEnumerable<Booking> GetByRental(int rentalId);
+        IEnumerable<Booking> GetByRentalAndDate(int rentalId, DateTime start, DateTime end);
+        int GetFreeUnit(int rentalId, DateTime start, DateTime end);
     }
 }
