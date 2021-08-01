@@ -40,9 +40,9 @@ namespace VacationRental.Api.Controllers
             if (rental is null)
                 throw new ApplicationException(Messages.Errors.RentalNotFound);
 
-            var bookings = BookingService.GetByRental(rentalId).Where(x => x.Start > start);
+            var bookings = BookingService.GetByRental(rentalId);
 
-            return new CalendarViewModel(rentalId, bookings, rental.PreparationTimeInDays);
+            return new CalendarViewModel(rentalId, bookings, rental.PreparationTimeInDays, start, nights);
         }
     }
 }

@@ -23,11 +23,12 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 4
+                Units = 4,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;
-            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/vacationrental/rentals", postRentalRequest))
             {
                 postRentalResponse.EnsureSuccessStatusCode();
                 postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();
@@ -62,11 +63,12 @@ namespace VacationRental.Api.Tests
         {
             var postRentalRequest = new RentalBindingModel
             {
-                Units = 1
+                Units = 1,
+                PreparationTimeInDays = 1
             };
 
             ResourceIdViewModel postRentalResult;
-            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/rentals", postRentalRequest))
+            using (var postRentalResponse = await _client.PostAsJsonAsync($"/api/v1/vacationrental/rentals", postRentalRequest))
             {
                 postRentalResponse.EnsureSuccessStatusCode();
                 postRentalResult = await postRentalResponse.Content.ReadAsAsync<ResourceIdViewModel>();

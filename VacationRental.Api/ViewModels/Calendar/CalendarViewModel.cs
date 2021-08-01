@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using VacationRental.Api.Model;
 
@@ -8,12 +9,16 @@ namespace VacationRental.Api.ViewModels
     {
         public int RentalId { get; set; }
         public List<CalendarDateViewModel> Dates { get; set; }
-        public CalendarViewModel(int rentalId, IEnumerable<Booking> bookings, int preparationTimeInDays)
+
+        public CalendarViewModel() { }
+
+        public CalendarViewModel(int rentalId, IEnumerable<Booking> bookings, int preparationTimeInDays, DateTime start, int nights)
         {
             this.RentalId = rentalId;
             this.Dates = new List<CalendarDateViewModel>();
-
-            this.Dates = bookings.Select(x => x.Start).Distinct().Select(x => new CalendarDateViewModel(x)).OrderBy(x => x.Date).ToList();
+            var end = start.AddDays(nights - 1);
+            var dateList = Enumerable.Range(0, 1 + end.Subtract(start).Days).Select(offset => start.AddDays(offset));
+            this.Dates = dateList.Select(x => new CalendarDateViewModel(x)).ToList();
 
             var unit = 1;
 
@@ -23,6 +28,7 @@ namespace VacationRental.Api.ViewModels
                 {
                     var date = this.Dates.FirstOrDefault(x => x.Date == b.Start.AddDays(i));
                     if (date is null) continue;
+                    
                     date.Bookings.Add(new CalendarBookingViewModel(b.Id, unit));
                 }
 
@@ -30,10 +36,8 @@ namespace VacationRental.Api.ViewModels
                 {
                     var date = this.Dates.FirstOrDefault(x => x.Date == b.Start.AddDays(i) || x.Date.AddDays(i) == b.Start.AddDays(i));
                     if (date is null) continue;
-                    if (this.Dates.FirstOrDefault(x => x.Date == date.Date.AddDays(i)) is null)
-                        this.Dates.Add(new CalendarDateViewModel(date.Date.AddDays(i)));
 
-                    this.Dates.FirstOrDefault(x => x.Date == date.Date.AddDays(i)).PreparationTimes.Add(new UnitViewModel(unit));
+                    this.Dates.FirstOrDefault(x => x.Date == date.Date.AddDays(i))?.PreparationTimes.Add(new UnitViewModel(unit));
                 }
                 unit++;
             }
